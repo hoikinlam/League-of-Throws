@@ -1,0 +1,15 @@
+For the first draft, I focused on building baseline models and continued building more features within the eda notebook. My earlier features relied heavily on raw values such as total gold or total kills, which scale into the tens of thousands and do not reflect relative game state. In contrast, ratio-based features (e.g., gold_ratio, towers_ratio) and normalized differences (e.g., gold_diff_norm) represent how far ahead a team is relative to the opponent and how quickly that advantage grew. These features capture volatility and competitive balance more effectively than raw totals and therefore produce a more realistic signal for identifying throws.
+
+I tested performance for various models, a baseline model where it predicts everything as "no throw", a logistic regression, k-nearest neighbor, decision tree, and random forest. The no throw model is useless for predicting throws though it is a good comparison for other models. It has a high accuracy but 0 F1,this indicates that accuracy can be misleading. The logistic regression produces a simple linear model that is easy to interpret with high roc-auc but low f1. The decision tree/random forest can help capture some non-linearistic elements but may overfit on certain splits. Lastly, KNN did perform decently well with higher F1 and ROC scores. This is probably due to my features using ratios between 0-1 thus the distance can be easily captured. However, KNN is sensitive to large datasets. 
+
+Some possible reasons for errors or biases:
+    - class imbalances: majority of the games from the dataset are non-throws, this may have a negative influence on the model where it is biased towards games that are "no-throws". 
+    - lack of temporal data: the dataset only contain the overall duration per game rather than snapshots which would help identify certain phases such as early-game, mid-game, and late-game. These would also influence the chances a team throws due to momentum shifts throughout different stages, thus throw conditions may need to be inferred. 
+    - improper feature scaling: some features such as "gold_diff_norm" have larger range values compared to the features that live within a ratio of 0-1. This may cause models to lean more towards certain features. 
+
+Ideas for final report:
+    - new features: maybe include some features using the wards to indicate map control (more map contro = more ahead), and also try to include features that would indicate the magnitude of an early game lead rather than inferring its lead based on early objectives.
+    - algorithm improvements: 
+        - testing with different weights
+        - tuning parameters such as depths, number of features, split criteria, leaf sizes, etc.
+    - optimize thresholds
